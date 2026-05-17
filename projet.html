@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Le Projet — _THOSE : The Last Archive</title>
+<title>Personnages — _THOSE : The Last Archive</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Special+Elite&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -14,9 +14,9 @@
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: var(--noir); color: var(--blanc); font-family: 'Share Tech Mono', monospace; min-height: 100vh; overflow-x: hidden; cursor: crosshair; }
-  body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999; opacity: 0.4; }
   body::after { content: ''; position: fixed; top: -100%; left: 0; width: 100%; height: 2px; background: rgba(106,0,0,0.15); animation: scanline 8s linear infinite; pointer-events: none; z-index: 998; }
   @keyframes scanline { 0%{top:-2px} 100%{top:100%} }
+
   nav { position: fixed; top: 0; left: 0; right: 0; padding: 24px 48px; display: flex; justify-content: space-between; align-items: center; z-index: 100; border-bottom: 1px solid #0f0f0f; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
   .nav-logo { font-size: 13px; color: #333; letter-spacing: 3px; text-decoration: none; }
   .nav-links { display: flex; gap: 40px; list-style: none; }
@@ -24,100 +24,264 @@
   .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--rouge-vif); transition: width 0.3s; }
   .nav-links a:hover, .nav-links a.active { color: var(--blanc); }
   .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+
   .page-header { padding: 160px 48px 80px; border-bottom: 1px solid #0f0f0f; }
   .page-eyebrow { font-size: 10px; color: var(--rouge-vif); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
   .page-eyebrow::before { content: '//'; color: #333; }
   .page-title { font-family: 'Special Elite', serif; font-size: clamp(36px,6vw,80px); color: var(--blanc); line-height: 1.1; margin-bottom: 24px; opacity: 0; animation: fadeUp 1s ease forwards 0.3s; }
   .page-intro { font-size: 13px; color: #444; line-height: 2; max-width: 500px; letter-spacing: 1px; opacity: 0; animation: fadeUp 1s ease forwards 0.6s; }
-  .content { max-width: 900px; margin: 0 auto; padding: 80px 48px 160px; }
-  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #0f0f0f; margin-bottom: 80px; }
-  .info-block { background: #000; padding: 32px 40px; border: 1px solid #0f0f0f; }
-  .info-label { font-size: 10px; color: var(--rouge-vif); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px; }
-  .info-value { font-family: 'Special Elite', serif; font-size: 15px; color: var(--blanc); }
-  .info-value.mono { font-family: 'Share Tech Mono', monospace; font-size: 12px; color: #555; }
-  .section { margin-bottom: 80px; }
-  .section-label { font-size: 10px; color: var(--rouge-vif); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
+
+  .content { max-width: 1000px; margin: 0 auto; padding: 80px 48px 160px; }
+
+  .section-label { font-size: 10px; color: var(--rouge-vif); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 40px; display: flex; align-items: center; gap: 12px; }
   .section-label::before { content: '//'; color: #333; }
-  .section-title { font-family: 'Special Elite', serif; font-size: clamp(22px,3vw,36px); color: var(--blanc); margin-bottom: 24px; line-height: 1.3; }
-  .section-text { font-size: 13px; color: #555; line-height: 2; max-width: 620px; letter-spacing: 1px; }
-  .cryptic-line { font-size: 11px; color: #1a0000; letter-spacing: 6px; margin-top: 40px; text-align: center; }
-  .divider { width: 1px; height: 60px; background: linear-gradient(to bottom, transparent, #1a0000, transparent); margin: 60px auto; }
-  .warning { border: 1px solid #1a0000; padding: 32px 40px; margin-top: 80px; position: relative; }
-  .warning::before { content: '⚠'; position: absolute; top: -12px; left: 32px; background: #000; padding: 0 8px; color: var(--rouge-vif); font-size: 14px; }
-  .warning-text { font-family: 'Special Elite', serif; font-size: 14px; color: #444; line-height: 1.8; letter-spacing: 1px; font-style: italic; }
-  .warning-text strong { color: #666; font-style: normal; }
+
+  .characters-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1px; background: #0a0a0a; }
+
+  .character-card { background: #000; padding: 40px 28px; border: 1px solid #0a0a0a; transition: all 0.4s; position: relative; overflow: hidden; cursor: pointer; }
+  .character-card::before { content: ''; position: absolute; inset: 0; background: var(--rouge); opacity: 0; transition: opacity 0.4s; }
+  .character-card:hover { border-color: #1a0000; }
+  .character-card:hover::before { opacity: 0.03; }
+  .character-card::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1px; background: var(--rouge-vif); transition: width 0.4s; }
+  .character-card:hover::after { width: 100%; }
+
+  .character-number { font-size: 9px; color: #1a1a1a; letter-spacing: 2px; margin-bottom: 20px; display: block; }
+  .character-name { font-family: 'Special Elite', serif; font-size: 18px; color: #555; line-height: 1.3; transition: color 0.4s; }
+  .character-card:hover .character-name { color: var(--blanc); }
+  .character-role { font-size: 10px; color: #1a1a1a; letter-spacing: 2px; margin-top: 12px; transition: color 0.4s; }
+  .character-card:hover .character-role { color: #333; }
+
+  /* POPUP ACCÈS REFUSÉ */
+  .popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    backdrop-filter: blur(4px);
+  }
+
+  .popup-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .popup {
+    border: 1px solid #1a0000;
+    background: #000;
+    padding: 48px;
+    max-width: 440px;
+    width: 90%;
+    position: relative;
+    transform: translateY(10px);
+    transition: transform 0.3s;
+  }
+
+  .popup-overlay.active .popup {
+    transform: translateY(0);
+  }
+
+  .popup-header {
+    font-size: 9px;
+    color: var(--rouge-vif);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .popup-header::before {
+    content: '⚠';
+    font-size: 12px;
+  }
+
+  .popup-title {
+    font-family: 'Special Elite', serif;
+    font-size: 22px;
+    color: var(--blanc);
+    margin-bottom: 16px;
+    line-height: 1.3;
+  }
+
+  .popup-name {
+    font-size: 11px;
+    color: #333;
+    letter-spacing: 3px;
+    margin-bottom: 24px;
+    font-style: italic;
+  }
+
+  .popup-text {
+    font-size: 12px;
+    color: #333;
+    line-height: 1.9;
+    letter-spacing: 1px;
+    margin-bottom: 32px;
+    border-left: 1px solid #1a0000;
+    padding-left: 16px;
+  }
+
+  .popup-code {
+    font-size: 10px;
+    color: #1a1a1a;
+    letter-spacing: 2px;
+    margin-bottom: 32px;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .popup-close {
+    font-size: 10px;
+    color: #333;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 1px solid #1a1a1a;
+    padding: 10px 20px;
+    background: none;
+    font-family: 'Share Tech Mono', monospace;
+    transition: all 0.3s;
+    display: inline-block;
+  }
+
+  .popup-close:hover {
+    border-color: #333;
+    color: var(--blanc);
+  }
+
+  .redacted-section { margin-top: 80px; border: 1px solid #0f0f0f; padding: 40px; position: relative; }
+  .redacted-section::before { content: '— ACCÈS RESTREINT —'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #000; padding: 0 16px; font-size: 9px; color: #1a0000; letter-spacing: 4px; white-space: nowrap; }
+  .redacted-text { font-family: 'Special Elite', serif; font-size: 13px; color: #1a1a1a; line-height: 2; letter-spacing: 1px; font-style: italic; text-align: center; }
+  .redacted-bar { display: inline-block; background: #111; height: 14px; vertical-align: middle; border-radius: 1px; }
+
   .status-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 10px 48px; background: rgba(0,0,0,0.9); border-top: 1px solid #0f0f0f; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
   .status-left { font-size: 10px; color: #222; letter-spacing: 2px; }
-  .status-right { font-size: 10px; color: #1a1a1a; letter-spacing: 1px; }
+  .status-right { font-size: 10px; color: #1a1a1a; }
   .status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--rouge-vif); margin-right: 8px; animation: pulse 2s infinite; }
+
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
   @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-  @media(max-width:768px){ nav{padding:20px 24px} .nav-links{gap:20px} .page-header{padding:120px 24px 60px} .content{padding:60px 24px 120px} .info-grid{grid-template-columns:1fr} .status-bar{padding:10px 24px} }
+  @media(max-width:768px) { nav{padding:20px 24px} .nav-links{gap:20px} .page-header{padding:120px 24px 60px} .content{padding:60px 24px 120px} .characters-grid{grid-template-columns:1fr 1fr} .status-bar{padding:10px 24px} }
 </style>
 </head>
 <body>
 
+<!-- POPUP -->
+<div class="popup-overlay" id="popup">
+  <div class="popup">
+    <div class="popup-header">accès refusé</div>
+    <div class="popup-title">Dossier classifié.</div>
+    <div class="popup-name" id="popup-name">— — —</div>
+    <p class="popup-text">Les informations concernant cet individu ne sont pas accessibles à ce niveau d'autorisation. Ce dossier sera déverrouillé lors de la sortie du jeu.</p>
+    <div class="popup-code">ERR_403 — CERBERUS_DIVISION — 第零課</div>
+    <button class="popup-close" onclick="closePopup()">fermer le dossier</button>
+  </div>
+</div>
+
 <nav>
   <a href="index.html" class="nav-logo">_TLA</a>
   <ul class="nav-links">
-    <li><a href="projet.html" class="active">Le projet</a></li>
-    <li><a href="personnages.html">Personnages</a></li>
+    <li><a href="projet.html">Le projet</a></li>
+    <li><a href="personnages.html" class="active">Personnages</a></li>
     <li><a href="developpement.html">Développement</a></li>
   </ul>
 </nav>
 
 <div class="page-header">
-  <div class="page-eyebrow">le projet</div>
-  <h1 class="page-title">_THOSE :<br>The Last Archive</h1>
-  <p class="page-intro">Marcus Veil a fermé le dossier il y a trois ans. Il n'aurait pas dû le rouvrir.</p>
+  <div class="page-eyebrow">personnages</div>
+  <h1 class="page-title">Ils étaient là<br>avant toi.</h1>
+  <p class="page-intro">Certains cherchaient des réponses. Certains voulaient oublier. Certains n'avaient pas le choix. Tous ont croisé quelque chose qu'ils n'auraient pas dû croiser.</p>
 </div>
 
 <div class="content">
 
-  <div class="info-grid">
-    <div class="info-block">
-      <div class="info-label">Genre</div>
-      <div class="info-value">Horreur psychologique</div>
+  <div class="section-label">dossiers</div>
+
+  <div class="characters-grid">
+    <div class="character-card" onclick="openPopup('Marcus Veil')">
+      <span class="character-number">001</span>
+      <div class="character-name">Marcus Veil</div>
+      <div class="character-role">protagoniste</div>
     </div>
-    <div class="info-block">
-      <div class="info-label">Plateforme</div>
-      <div class="info-value">PC Windows</div>
+    <div class="character-card" onclick="openPopup('ECHO')">
+      <span class="character-number">002</span>
+      <div class="character-name">ECHO</div>
+      <div class="character-role">— — —</div>
     </div>
-    <div class="info-block">
-      <div class="info-label">Statut</div>
-      <div class="info-value mono">en développement</div>
+    <div class="character-card" onclick="openPopup('Fr4gment')">
+      <span class="character-number">003</span>
+      <div class="character-name">Fr4gment</div>
+      <div class="character-role">— — —</div>
     </div>
-    <div class="info-block">
-      <div class="info-label">Moteur</div>
-      <div class="info-value mono">Godot 4</div>
+    <div class="character-card" onclick="openPopup('Hakura Kimoe')">
+      <span class="character-number">004</span>
+      <div class="character-name">Hakura Kimoe</div>
+      <div class="character-role">— — —</div>
+    </div>
+    <div class="character-card" onclick="openPopup('Mei Toshibara')">
+      <span class="character-number">005</span>
+      <div class="character-name">Mei Toshibara</div>
+      <div class="character-role">— — —</div>
+    </div>
+    <div class="character-card" onclick="openPopup('Isaac Velasquez')">
+      <span class="character-number">006</span>
+      <div class="character-name">Isaac Velasquez</div>
+      <div class="character-role">— — —</div>
+    </div>
+    <div class="character-card" onclick="openPopup('The Moderator')">
+      <span class="character-number">007</span>
+      <div class="character-name">The Moderator</div>
+      <div class="character-role">— — —</div>
+    </div>
+    <div class="character-card" onclick="openPopup('Isla Veil')">
+      <span class="character-number">008</span>
+      <div class="character-name">Isla Veil</div>
+      <div class="character-role">— — —</div>
+    </div>
+    <div class="character-card" onclick="openPopup('Sofia Arenas')">
+      <span class="character-number">009</span>
+      <div class="character-name">Sofia Arenas</div>
+      <div class="character-role">— — —</div>
+    </div>
+    <div class="character-card" onclick="openPopup('Arjun Mehta')">
+      <span class="character-number">010</span>
+      <div class="character-name">Arjun Mehta</div>
+      <div class="character-role">— — —</div>
+    </div>
+    <div class="character-card" onclick="openPopup('Mateus Pereira')">
+      <span class="character-number">011</span>
+      <div class="character-name">Mateus Pereira</div>
+      <div class="character-role">— — —</div>
+    </div>
+    <div class="character-card" onclick="openPopup('L\'Inconnue')">
+      <span class="character-number">012</span>
+      <div class="character-name">L'Inconnue</div>
+      <div class="character-role">— — —</div>
+    </div>
+    <div class="character-card" onclick="openPopup('Cartio')">
+      <span class="character-number">013</span>
+      <div class="character-name">Cartio</div>
+      <div class="character-role">— — —</div>
+    </div>
+    <div class="character-card" onclick="openPopup('_THOSE')">
+      <span class="character-number">014</span>
+      <div class="character-name">_THOSE</div>
+      <div class="character-role">— — —</div>
     </div>
   </div>
 
-  <div class="section">
-    <div class="section-label">l'histoire</div>
-    <h2 class="section-title">Quelque chose attendait<br>qu'il recommence à chercher.</h2>
-    <p class="section-text">Ancien enquêteur spécialisé dans les crimes numériques, Marcus replonge dans une vieille affaire après avoir découvert des traces inexpliquées sur internet. Ce qu'il va trouver n'a pas de nom. Pas encore.</p>
-  </div>
-
-  <div class="divider"></div>
-
-  <div class="section">
-    <div class="section-label">la structure</div>
-    <h2 class="section-title">Cinq couches.<br>Une seule vérité.</h2>
-    <p class="section-text">_THOSE : The Last Archive se joue entièrement sur un écran d'ordinateur. Le joueur navigue dans les profondeurs d'internet — de la surface jusqu'à ce qui ne devrait pas exister. Chaque couche révèle quelque chose de nouveau. Chaque recherche a des conséquences.</p>
-    <div class="cryptic-line">INTERNET — DEEP — ARCHIVE — DARK — _THOSE</div>
-  </div>
-
-  <div class="divider"></div>
-
-  <div class="section">
-    <div class="section-label">à propos</div>
-    <h2 class="section-title">Ce n'est pas<br>un jeu comme les autres.</h2>
-    <p class="section-text">_THOSE : The Last Archive n'existe pas uniquement sur ton écran. Ce que tu feras dans le jeu aura des conséquences que tu ne verras pas venir. Certaines choses que tu trouveras n'étaient pas censées être trouvées.</p>
-  </div>
-
-  <div class="warning">
-    <p class="warning-text">Certains éléments de ce jeu <strong>existent en dehors du jeu</strong>.<br>Si tu tombes sur quelque chose qui ne devrait pas être là —<br>cherche bien.</p>
+  <div class="redacted-section">
+    <p class="redacted-text">
+      Les informations concernant ces individus sont <span class="redacted-bar" style="width:120px"></span> et ne seront accessibles qu'après <span class="redacted-bar" style="width:80px"></span>.<br><br>
+      Certains de ces dossiers n'existent pas officiellement.<br>
+      Certains de ces individus non plus.
+    </p>
   </div>
 
 </div>
@@ -126,6 +290,25 @@
   <span class="status-left"><span class="status-dot"></span>développement en cours</span>
   <span class="status-right">_THOSE : The Last Archive — 2026</span>
 </div>
+
+<script>
+  function openPopup(name) {
+    document.getElementById('popup-name').textContent = name;
+    document.getElementById('popup').classList.add('active');
+  }
+
+  function closePopup() {
+    document.getElementById('popup').classList.remove('active');
+  }
+
+  document.getElementById('popup').addEventListener('click', function(e) {
+    if (e.target === this) closePopup();
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closePopup();
+  });
+</script>
 
 </body>
 </html>
