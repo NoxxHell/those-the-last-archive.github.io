@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>_THOSE : The Last Archive</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --noir: #000000;
+    --rouge: #6a0000;
+    --rouge-vif: #8a0000;
+    --blanc: #e8e8e8;
+    --gris: #333333;
+    --vert: #025F1D;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--noir);
+    color: var(--blanc);
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* BRUIT DE FOND */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.4;
+  }
+
+  /* LIGNE DE SCAN */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: rgba(106, 0, 0, 0.15);
+    animation: scanline 8s linear infinite;
+    pointer-events: none;
+    z-index: 998;
+  }
+
+  @keyframes scanline {
+    0% { top: -2px; }
+    100% { top: 100%; }
+  }
+
+  /* NAVIGATION */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 24px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    border-bottom: 1px solid #0f0f0f;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(10px);
+  }
+
+  .nav-logo {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: #333;
+    letter-spacing: 3px;
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: #444;
+    text-decoration: none;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.3s;
+    position: relative;
+  }
+
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--rouge-vif);
+    transition: width 0.3s;
+  }
+
+  .nav-links a:hover {
+    color: var(--blanc);
+  }
+
+  .nav-links a:hover::after {
+    width: 100%;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 100px 48px;
+    position: relative;
+  }
+
+  .hero-eyebrow {
+    font-size: 10px;
+    color: #333;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.5s;
+  }
+
+  .hero-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(32px, 6vw, 72px);
+    font-weight: 400;
+    color: var(--blanc);
+    letter-spacing: 8px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.8s;
+    position: relative;
+  }
+
+  .hero-title .underscore {
+    color: var(--rouge-vif);
+    animation: blink 1.2s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .hero-subtitle {
+    font-family: 'Special Elite', monospace;
+    font-size: clamp(14px, 2vw, 18px);
+    color: #555;
+    letter-spacing: 4px;
+    margin-bottom: 80px;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 1.1s;
+  }
+
+  .hero-tagline {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: #3a3a3a;
+    letter-spacing: 3px;
+    margin-bottom: 60px;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 1.4s;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 20px;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 1.7s;
+  }
+
+  .btn {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 14px 32px;
+    text-decoration: none;
+    transition: all 0.3s;
+    border: 1px solid #222;
+    color: #444;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--rouge);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+    z-index: -1;
+  }
+
+  .btn:hover {
+    color: var(--blanc);
+    border-color: var(--rouge-vif);
+  }
+
+  .btn:hover::before {
+    transform: translateX(0);
+  }
+
+  .btn-primary {
+    border-color: var(--rouge);
+    color: #666;
+  }
+
+  /* GLITCH */
+  .glitch-container {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .glitch-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(106, 0, 0, 0.3);
+    animation: glitchLine 6s infinite;
+  }
+
+  .glitch-line:nth-child(1) { animation-delay: 0s; }
+  .glitch-line:nth-child(2) { animation-delay: 2s; }
+  .glitch-line:nth-child(3) { animation-delay: 4s; }
+
+  @keyframes glitchLine {
+    0% { top: 10%; opacity: 0; width: 0; }
+    5% { opacity: 1; width: 30%; }
+    10% { top: 40%; width: 60%; }
+    15% { top: 80%; width: 20%; opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  /* SECTION ABOUT */
+  .section {
+    padding: 120px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 10px;
+    color: var(--rouge-vif);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::before {
+    content: '//';
+    color: #333;
+  }
+
+  .section-title {
+    font-family: 'Special Elite', serif;
+    font-size: clamp(24px, 4vw, 48px);
+    color: var(--blanc);
+    margin-bottom: 32px;
+    line-height: 1.2;
+  }
+
+  .section-text {
+    font-size: 13px;
+    color: #555;
+    line-height: 2;
+    max-width: 600px;
+    letter-spacing: 1px;
+  }
+
+  /* CARDS */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1px;
+    background: #111;
+    margin-top: 60px;
+  }
+
+  .card {
+    background: #000;
+    padding: 40px 32px;
+    border: 1px solid #0f0f0f;
+    transition: border-color 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 0;
+    background: var(--rouge-vif);
+    transition: height 0.4s;
+  }
+
+  .card:hover {
+    border-color: #1a0000;
+  }
+
+  .card:hover::before {
+    height: 100%;
+  }
+
+  .card-number {
+    font-size: 10px;
+    color: #222;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+  }
+
+  .card-title {
+    font-family: 'Special Elite', serif;
+    font-size: 18px;
+    color: var(--blanc);
+    margin-bottom: 12px;
+  }
+
+  .card-text {
+    font-size: 12px;
+    color: #444;
+    line-height: 1.8;
+    letter-spacing: 0.5px;
+  }
+
+  /* AVERTISSEMENT */
+  .warning {
+    border: 1px solid #1a0000;
+    padding: 32px 40px;
+    margin-top: 80px;
+    position: relative;
+  }
+
+  .warning::before {
+    content: '⚠';
+    position: absolute;
+    top: -12px;
+    left: 32px;
+    background: #000;
+    padding: 0 8px;
+    color: var(--rouge-vif);
+    font-size: 14px;
+  }
+
+  .warning-text {
+    font-family: 'Special Elite', serif;
+    font-size: 14px;
+    color: #444;
+    line-height: 1.8;
+    letter-spacing: 1px;
+    font-style: italic;
+  }
+
+  .warning-text strong {
+    color: #666;
+    font-style: normal;
+  }
+
+  /* STATUS BAR */
+  .status-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px 48px;
+    background: rgba(0,0,0,0.9);
+    border-top: 1px solid #0f0f0f;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+  }
+
+  .status-left {
+    font-size: 10px;
+    color: #222;
+    letter-spacing: 2px;
+  }
+
+  .status-right {
+    font-size: 10px;
+    color: #1a1a1a;
+    letter-spacing: 1px;
+  }
+
+  .status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--rouge-vif);
+    margin-right: 8px;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* DIVIDER */
+  .divider {
+    width: 1px;
+    height: 80px;
+    background: linear-gradient(to bottom, transparent, #1a0000, transparent);
+    margin: 0 auto 60px;
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 40px 48px;
+    border-top: 1px solid #0f0f0f;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-text {
+    font-size: 10px;
+    color: #1a1a1a;
+    letter-spacing: 2px;
+  }
+
+  .footer-right {
+    font-size: 10px;
+    color: #111;
+    letter-spacing: 1px;
+    font-family: 'Special Elite', serif;
+    font-style: italic;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 20px 24px; }
+    .nav-links { gap: 20px; }
+    .hero { padding: 100px 24px; }
+    .section { padding: 80px 24px; }
+    .status-bar { padding: 10px 24px; }
+    footer { padding: 30px 24px; flex-direction: column; gap: 12px; text-align: center; }
+    .hero-cta { flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav>
+  <a href="index.html" class="nav-logo">_TLA</a>
+  <ul class="nav-links">
+    <li><a href="projet.html">Le projet</a></li>
+    <li><a href="personnages.html">Personnages</a></li>
+    <li><a href="developpement.html">Développement</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="glitch-container">
+    <div class="glitch-line"></div>
+    <div class="glitch-line"></div>
+    <div class="glitch-line"></div>
+  </div>
+
+  <div class="hero-eyebrow">— projet en développement —</div>
+
+  <h1 class="hero-title">
+    <span class="underscore">_</span>THOSE
+  </h1>
+
+  <div class="hero-subtitle">THE LAST ARCHIVE</div>
+
+  <div class="hero-tagline">tu cherches depuis trop longtemps.</div>
+
+  <div class="hero-cta">
+    <a href="projet.html" class="btn btn-primary">Découvrir</a>
+    <a href="developpement.html" class="btn">Suivre le développement</a>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<div class="section">
+  <div class="divider"></div>
+
+  <div class="section-label">présentation</div>
+  <h2 class="section-title">Un jeu qui existe<br>en dehors du jeu.</h2>
+  <p class="section-text">
+    _THOSE : The Last Archive est un jeu d'horreur psychologique qui se joue entièrement sur un écran d'ordinateur. Ce que tu feras dans le jeu aura des conséquences que tu ne verras pas venir.
+  </p>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-number">01</div>
+      <div class="card-title">Le concept</div>
+      <div class="card-text">Jeu d'horreur psychologique qui se joue entièrement sur un écran d'ordinateur. Le joueur navigue dans les couches d'internet à la recherche de quelque chose qu'il n'aurait peut-être pas dû chercher.</div>
+    </div>
+    <div class="card">
+      <div class="card-number">02</div>
+      <div class="card-title">L'expérience</div>
+      <div class="card-text">Un ARG intégré qui brise le 4ème mur. De vrais comptes sur de vraies plateformes. Une entité qui sait que tu joues.</div>
+    </div>
+    <div class="card">
+      <div class="card-number">03</div>
+      <div class="card-title">L'histoire</div>
+      <div class="card-text">Marcus Veil, ancien enquêteur du dark web, replonge dans une affaire qu'il aurait dû laisser enterrée. Plus il cherche, plus il nourrit ce qu'il traque.</div>
+    </div>
+    <div class="card">
+      <div class="card-number">04</div>
+      <div class="card-title">Le twist</div>
+      <div class="card-text">_THOSE : The Last Archive n'est pas un jeu comme les autres. Ce que tu feras dans le jeu aura des conséquences que tu ne verras pas venir.</div>
+    </div>
+  </div>
+
+  <div class="warning">
+    <p class="warning-text">
+      Certains éléments de ce jeu <strong>existent en dehors du jeu</strong>.<br>
+      Si tu tombes sur quelque chose qui ne devrait pas être là — tu as peut-être trouvé quelque chose.<br>
+      Ou peut-être que c'est elle qui t'a trouvé.
+    </p>
+  </div>
+</div>
+
+<!-- STATUS BAR -->
+<div class="status-bar">
+  <span class="status-left"><span class="status-dot"></span>développement en cours — chapitre 1</span>
+  <span class="status-right">_THOSE : The Last Archive — 2026</span>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-text">© 2026 — _THOSE : The Last Archive — tous droits réservés</span>
+  <span class="footer-right">cherche bien.</span>
+</footer>
+
+<script>
+  // Effet de glitch aléatoire sur le titre
+  const title = document.querySelector('.hero-title');
+  const chars = '▓▒░█▄▀■□▪▫';
+
+  function glitchText() {
+    const original = '_THOSE';
+    const glitched = original.split('').map(char => {
+      if (Math.random() < 0.1 && char !== '_') {
+        return chars[Math.floor(Math.random() * chars.length)];
+      }
+      return char;
+    }).join('');
+
+    title.innerHTML = `<span class="underscore">_</span>${glitched.slice(1)}`;
+
+    setTimeout(() => {
+      title.innerHTML = `<span class="underscore">_</span>THOSE`;
+    }, 100);
+  }
+
+  setInterval(() => {
+    if (Math.random() < 0.3) glitchText();
+  }, 3000);
+
+  // Curseur personnalisé
+  document.addEventListener('mousemove', (e) => {
+    document.documentElement.style.setProperty('--mx', e.clientX + 'px');
+    document.documentElement.style.setProperty('--my', e.clientY + 'px');
+  });
+</script>
+
+</body>
+</html>
