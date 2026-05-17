@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Développement — _THOSE : The Last Archive</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --noir: #000000;
+    --rouge: #6a0000;
+    --rouge-vif: #8a0000;
+    --blanc: #e8e8e8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--noir); color: var(--blanc); font-family: 'Share Tech Mono', monospace; min-height: 100vh; overflow-x: hidden; cursor: crosshair; }
+  body::after { content: ''; position: fixed; top: -100%; left: 0; width: 100%; height: 2px; background: rgba(106,0,0,0.15); animation: scanline 8s linear infinite; pointer-events: none; z-index: 998; }
+  @keyframes scanline { 0%{top:-2px} 100%{top:100%} }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; padding: 24px 48px; display: flex; justify-content: space-between; align-items: center; z-index: 100; border-bottom: 1px solid #0f0f0f; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
+  .nav-logo { font-size: 13px; color: #333; letter-spacing: 3px; text-decoration: none; }
+  .nav-links { display: flex; gap: 40px; list-style: none; }
+  .nav-links a { font-size: 11px; color: #444; text-decoration: none; letter-spacing: 2px; text-transform: uppercase; transition: color 0.3s; position: relative; }
+  .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--rouge-vif); transition: width 0.3s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--blanc); }
+  .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+
+  /* HERO CENTRÉ */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 100px 48px;
+    gap: 32px;
+  }
+
+  .page-eyebrow {
+    font-size: 10px;
+    color: var(--rouge-vif);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .page-eyebrow::before { content: '//'; color: #333; }
+
+  .loading-title {
+    font-family: 'Special Elite', serif;
+    font-size: clamp(28px, 4vw, 52px);
+    color: #333;
+    line-height: 1.3;
+  }
+
+  /* BARRE DE CHARGEMENT */
+  .loading-bar-wrap {
+    width: 320px;
+    height: 1px;
+    background: #0f0f0f;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .loading-bar {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, transparent, var(--rouge-vif), transparent);
+    animation: loading 3s ease-in-out infinite;
+  }
+
+  @keyframes loading {
+    0% { left: -100%; }
+    100% { left: 100%; }
+  }
+
+  .loading-text {
+    font-size: 11px;
+    color: #1a1a1a;
+    letter-spacing: 3px;
+    animation: blink 2s step-end infinite;
+  }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .loading-percent {
+    font-size: 10px;
+    color: #111;
+    letter-spacing: 2px;
+  }
+
+  /* LOGS */
+  .logs {
+    margin-top: 40px;
+    text-align: left;
+    width: 320px;
+    border-left: 1px solid #0f0f0f;
+    padding-left: 20px;
+  }
+
+  .log-line {
+    font-size: 10px;
+    color: #1a1a1a;
+    letter-spacing: 1px;
+    line-height: 2;
+    opacity: 0;
+    animation: fadeIn 0.5s ease forwards;
+  }
+
+  .log-line:nth-child(1) { animation-delay: 0.5s; }
+  .log-line:nth-child(2) { animation-delay: 1.5s; }
+  .log-line:nth-child(3) { animation-delay: 2.5s; }
+  .log-line:nth-child(4) { animation-delay: 3.5s; }
+  .log-line:nth-child(5) { animation-delay: 4.5s; color: #1a0000; }
+
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+  .status-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 10px 48px; background: rgba(0,0,0,0.9); border-top: 1px solid #0f0f0f; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
+  .status-left { font-size: 10px; color: #222; letter-spacing: 2px; }
+  .status-right { font-size: 10px; color: #1a1a1a; }
+  .status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--rouge-vif); margin-right: 8px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  @media(max-width:768px) { nav{padding:20px 24px} .nav-links{gap:20px} .hero{padding:100px 24px} .loading-bar-wrap{width:260px} .logs{width:260px} .status-bar{padding:10px 24px} }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">_TLA</a>
+  <ul class="nav-links">
+    <li><a href="projet.html">Le projet</a></li>
+    <li><a href="personnages.html">Personnages</a></li>
+    <li><a href="developpement.html" class="active">Développement</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <div class="page-eyebrow">développement</div>
+
+  <div class="loading-title">Chargement des<br>documents en cours...</div>
+
+  <div class="loading-bar-wrap">
+    <div class="loading-bar"></div>
+  </div>
+
+  <div class="loading-text">veuillez patienter — — —</div>
+
+  <div class="loading-percent" id="percent">0%</div>
+
+  <div class="logs">
+    <div class="log-line">// connexion au serveur établie</div>
+    <div class="log-line">// récupération des archives...</div>
+    <div class="log-line">// déchiffrement en cours...</div>
+    <div class="log-line">// accès aux fichiers de développement...</div>
+    <div class="log-line">// erreur — fichiers inaccessibles</div>
+  </div>
+
+</div>
+
+<div class="status-bar">
+  <span class="status-left"><span class="status-dot"></span>développement en cours</span>
+  <span class="status-right">_THOSE : The Last Archive — 2026</span>
+</div>
+
+<script>
+  // Compteur de pourcentage qui monte mais ne dépasse jamais 94%
+  let percent = 0;
+  const el = document.getElementById('percent');
+
+  const interval = setInterval(() => {
+    if (percent < 94) {
+      percent += Math.floor(Math.random() * 3) + 1;
+      if (percent > 94) percent = 94;
+      el.textContent = percent + '%';
+    } else {
+      clearInterval(interval);
+      setTimeout(() => {
+        el.textContent = '94%';
+        el.style.color = '#1a0000';
+      }, 500);
+    }
+  }, 200);
+</script>
+
+</body>
+</html>
